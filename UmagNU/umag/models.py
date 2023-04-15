@@ -6,7 +6,7 @@ class Supply(models.Model):
     barcode = models.BigIntegerField(null=False)
     quantity = models.IntegerField(default=1, null=False)
     price = models.IntegerField(default=0, null=False)
-    supply_time = models.DateTimeField(auto_now_add=True, null=False)
+    supply_time = models.DateTimeField(null=False)
     class Meta:
         indexes = [
             models.Index(fields=['barcode', 'supply_time']),

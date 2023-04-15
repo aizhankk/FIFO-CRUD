@@ -7,23 +7,75 @@
 ## Реализация
 
 1. Создание моделей:
+   1.1. Создание модели Purchase
+   В файле models.py:
 
-   - Создайте модели Purchase и Sale в файле `models.py`.
-   - Модель Purchase должна содержать поля: `quantity`, `price`, `date`.
-   - Модель Sale должна содержать поля: `quantity`, `price`, `date`.
+   - Создайте класс Purchase, который наследуется от models.Model.
+   - Добавьте поле quantity с типом models.PositiveIntegerField.
+   - Добавьте поле price с типом models.DecimalField и параметрами max_digits и decimal_places.
+   - Добавьте поле date с типом models.DateTimeField.
+   1.2. Создание модели Sale  
+   В файле models.py:
 
+   - Создайте класс Sale, который наследуется от models.Model.
+   - Добавьте поле quantity с типом models.PositiveIntegerField.
+   - Добавьте поле price с типом models.DecimalField и параметрами max_digits и decimal_places.
+   - Добавьте поле date с типом models.DateTimeField.
+   
 2. Создание сериализаторов:
+   2.1. Создание сериализатора PurchaseSerializer
+   В файле serializers.py:
 
-   - В файле `serializers.py` создайте сериализаторы `PurchaseSerializer` и `SaleSerializer` для обработки данных моделей Purchase и Sale.
+    - Создайте класс PurchaseSerializer, который наследуется от serializers.ModelSerializer.
+    - Укажите класс модели Purchase в атрибуте Meta.model.
+    - Укажите поля для сериализации в атрибуте Meta.fields: ('id', 'quantity', 'price', 'date').
+   
+   2.2. Создание сериализатора SaleSerializer
+   В файле serializers.py:
+
+   - Создайте класс SaleSerializer, который наследуется от serializers.ModelSerializer.
+   - Укажите класс модели Sale в атрибуте Meta.model.
+   - Укажите поля для сериализации в атрибуте Meta.fields: ('id', 'quantity', 'price', 'date').
 
 3. Создание view-функций:
+   3.1. Создание CRUD view-функций для модели Purchase
+   В файле views.py:
 
-   - В файле `views.py` создайте CRUD view-функции для моделей Purchase и Sale. Убедитесь, что у вас есть функции для создания, редактирования, удаления и просмотра объектов.
-   - Создайте функцию для подсчета прибыли с учетом себестоимости по методу FIFO.
+   - Создайте классы PurchaseListCreate, PurchaseRetrieveUpdateDestroy, наследуясь соответственно от generics.ListCreateAPIView и generics.RetrieveUpdateDestroyAPIView.
+   - Укажите класс модели Purchase в атрибуте queryset.
+   - Укажите класс сериализатора PurchaseSerializer в атрибуте serializer_class.
+   
+   3.2. Создание CRUD view-функций для модели Sale
+   
+   В файле views.py:
+
+   - Создайте классы SaleListCreate, SaleRetrieveUpdateDestroy, наследуясь соответственно от generics.ListCreateAPIView и generics.RetrieveUpdateDestroyAPIView.
+   - Укажите класс модели Sale в атрибуте queryset.
+   - Укажите класс сериализатора SaleSerializer в атрибуте serializer_class.
+   - 3.3. Создание функции для подсчета прибыли с учетом себестоимости по методу FIFO
+   
+   В файле views.py:
+   
+   - Создайте класс ProfitFIFO, который наследуется от generics.GenericAPIView.
+   - Укажите классы моделей Purchase и Sale в атрибуте queryset.
+   - Создайте функцию get:
+   - Получите список всех закупок, отсортированный по дате.
+   - Получите список всех продаж, отсортированный по дате.
+   - Используйте алгоритм FIFO для расчета прибыли с учетом себестоимости продаж.
+   - Верните общую прибыль в виде JSON-ответа.
 
 4. Создание маршрутов:
 
-   - В файле `urls.py` добавьте пути для каждой view-функции, созданных на предыдущем шаге.
+   В файле urls.py:
+
+   Импортируйте все созданные view-функции.
+   Добавьте пути для каждой view-функции:
+   - path('purchases/', PurchaseListCreate.as_view(), name='purchase-list-create')
+   - path('purchases/<int:pk>/', PurchaseRetrieveUpdateDestroy.as_view(), name='purchase-retrieve-update-destroy')
+   - path('sales/', SaleListCreate.as_view(), name='sale-list-create')
+   - path('sales/<int:pk>/', SaleRetrieveUpdateDestroy.as_view(), name='sale-retrieve-update-destroy')
+   - path('profit-fifo/', ProfitFIFO.as_view(), name='profit-fifo')
+
 
 5. Миграции:
 
